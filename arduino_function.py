@@ -37,8 +37,8 @@ def get_data(choice = b'C'):
 	arduino_serial.write(choice)
 
 	read_byte = arduino_serial.read(100)
-	#data_list = [i for i in read_byte]											#send b'B' to Arduino
-	data_list = str(read_byte,'utf8').split('\r\n')								#send b'C' to Arduino
+	#data_list = [i for i in read_byte]		#send b'B' to Arduino
+	data_list = str(read_byte,'utf8').split('\r\n')		#send b'C' to Arduino
 	data_list[3] = (datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
 	
 	return data_list
@@ -50,13 +50,10 @@ def write_csv(data_list, file_name = 'record.csv'):
 		file.close()
 		
 def read_csv(file_name = 'record.csv'):
-	record_list = []
 	with open(file_name,'r') as f:
-		csv_reader = csv.reader(f)
-		for row in csv_reader:
-			record_list.append(row)
+		record_list = list(csv.reader(f))[-24:]
 		f.close()
-	return record_list
+	return reversed(record_list)
 
 def loop_get():
 	data = get_data(b'C')

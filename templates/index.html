@@ -1,0 +1,59 @@
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Testing</title>
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+</head>
+<body>
+<div id="container" style="width: 550px; height: 400px; margin: 0 auto"></div>
+<script language="JavaScript">
+$(document).ready(function() {   
+   var title = {
+      text: 'Testing'   
+   };
+   var subtitle = {
+      text: 'Source: arduino'
+   };
+   var xAxis = {
+      type: 'datetime',
+      minRange: 24*3600*1000 // 14 天
+   };
+   var yAxis = {
+      title: {
+         text: 'int'
+      }
+   };
+   var plotOptions = {
+      line: {
+         dataLabels: {
+            enabled: true
+         },   
+         enableMouseTracking: false
+      }
+   };
+   var series= [{
+         name: 'Tokyo',
+		 pointInterval: 2 * 3600 * 1000,
+         data: [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+      }, {
+         name: 'London',
+		 pointInterval: 2 * 3600 * 1000,
+         data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+      }
+   ];
+   
+   var json = {};
+
+   json.title = title;
+   json.subtitle = subtitle;
+   json.xAxis = xAxis;
+   json.yAxis = yAxis;  
+   json.series = series;
+   json.plotOptions = plotOptions;
+   $('#container').highcharts(json);
+  
+});
+</script>
+</body>
+</html>
