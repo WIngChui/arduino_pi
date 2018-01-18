@@ -12,9 +12,9 @@ app = Flask(__name__)
 @app.route("/", methods=['GET'])
 def index():
 	record_list = read_csv()
-	temp = [i[0] for i in record_list]
-	humidity = [i[1] for i in record_list]
-	light_resist = [i[2] for i in record_list]
+	temp = [int(i[0]) for i in record_list]
+	humidity = [int(i[1]) for i in record_list]
+	light_resist = [int(i[2]) for i in record_list]
 	return render_template('index.html', time_interval = time_interval*1000, temp = temp, humidity = humidity, light_resist = light_resist)
 
 app.wsgi_app = ProxyFix(app.wsgi_app)

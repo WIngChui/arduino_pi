@@ -17,7 +17,7 @@ $(document).ready(function() {
    };
    var xAxis = {
       type: 'datetime',
-      minRange: 24*3600*1000 // 1 天
+      minRange: 24*{{time_interval}} // 24 *3600*1000 = 1 day
    };
    var yAxis = {
       title: {
