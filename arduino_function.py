@@ -26,6 +26,7 @@ def __init__(self):
 	self.serial = self.connect_arduino()
 '''
 def	connect_arduino(self):
+	global arduino_serial
 	dev_port = arduino_serial.port = serial.tools.list_ports.comports()[0].device
 	arduino_serial = serial.Serial(port = dev_port, baudrate=9600, parity='N', stopbits=1, timeout=1)
 	arduino_serial.open()

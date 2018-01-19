@@ -1,6 +1,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
+<meta http-equiv="refresh" content="{{time_interval}}">
 <title>Testing</title>
 <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="http://code.highcharts.com/highcharts.js"></script>
@@ -33,17 +34,17 @@ $(document).ready(function() {
    };
    var series= [{
          name: 'Temperature(*10)',
-		 pointInterval: {{time_interval}},
+		 pointInterval: {{time_interval}}*1000,
          pointStart: Date.UTC{{date_time}},
 		 data: {{temp}}
       }, {
          name: 'Humidity(*10)',
-		 pointInterval: {{time_interval}},
+		 pointInterval: {{time_interval}}*1000,
 		 pointStart: Date.UTC{{date_time}},
          data: {{humidity}}
       }, {
          name: 'Light Resistance',
-		 pointInterval: {{time_interval}},
+		 pointInterval: {{time_interval}}*1000,
 		 pointStart: Date.UTC{{date_time}},
          data: {{light_resist}}
       }
