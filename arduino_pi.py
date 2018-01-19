@@ -15,7 +15,7 @@ def index():
 	temp = [int(i[0])*10 for i in record_list]		#	[['',int(i[0])] for i in record_list]
 	humidity = [int(i[1])*10 for i in record_list]
 	light_resist = [int(i[2]) for i in record_list]
-	date_time = (time.mktime(time.strptime(record_list[0][3],"%Y/%m/%d %H:%M:%S")))
+	date_time = tuple(time.strptime(record_list[0][3],"%Y/%m/%d %H:%M:%S"))[:6]
 	return render_template('index.html', time_interval = time_interval*1000, temp = temp, humidity = humidity, light_resist = light_resist, date_time = date_time)
 	
 @app.route("/stop")
