@@ -16,8 +16,7 @@ $(document).ready(function() {
       text: 'arduino'
    };
    var xAxis = {
-      type: 'datetime',
-	  //minRange : 24 * {{time_interval}}
+      type: 'datetime'
    };
    var yAxis = {
       title: {
@@ -25,7 +24,7 @@ $(document).ready(function() {
       }
    };
    var plotOptions = {
-      line: {
+      spline: {
          dataLabels: {
             enabled: true
          },   
