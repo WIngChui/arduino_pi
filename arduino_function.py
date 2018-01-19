@@ -21,27 +21,31 @@ class RepeatingTimer(Timer):
 			self.function(*self.args, **self.kwargs)
 		self.finished.set()
 
-def	connect_arduino():
-	arduino_serial = serial.Serial(baudrate=9600, parity='N', stopbits=1, timeout=1)
-	arduino_serial.port = serial.tools.list_ports.comports()[0].device
-	arduino_serial.open()
-	arduino_serial.reset_output_buffer()
-	arduino_serial.reset_input_buffer()
-	return arduino_serial
+class arduino_connector():
+	def __init__(self):
+		self.serial = self.connect_arduino()
 
-#	Data returned in format : "temperature\r\nhumidity\r\nLight_Resistance\r\n"
-#	e.g.	"12\r\n43\r\n1023\r\n"
-#			temperature: 12C , humidity:43 , Light_Resistance: 1023
-def get_data(choice = b'C'):
-	global arduino_serial
-	arduino_serial.write(choice)
+	def	connect_arduino(self):
+		dev_port = arduino_serial.port = serial.tools.list_ports.comports()[0].device
+		arduino_serial = serial.Serial(port = dev_port, baudrate=9600, parity='N', stopbits=1, timeout=1)
+		arduino_serial.open()
+		arduino_serial.reset_output_buffer()
+		arduino_serial.reset_input_buffer()
+		return arduino_serial
 
-	read_byte = arduino_serial.read(100)
-	#data_list = [i for i in read_byte]		#send b'B' to Arduino
-	data_list = str(read_byte,'utf8').split('\r\n')		#send b'C' to Arduino
-	data_list[3] = (datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
-	
-	return data_list
+	#	Data returned in format : "temperature\r\nhumidity\r\nLight_Resistance\r\n"
+	#	e.g.	"12\r\n43\r\n1023\r\n"
+	#			temperature: 12C , humidity:43 , Light_Resistance: 1023
+	def get_data(choice = b'C'):
+		global arduino_serial
+		self.serial.write(choice)
+
+		read_byte = self.serial.read(100)
+		#data_list = [i for i in read_byte]		#send b'B' to Arduino
+		data_list = str(read_byte,'utf8').split('\r\n')		#send b'C' to Arduino
+		data_list[3] = (datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
+		
+		return data_list
 
 def write_csv(data_list, file_name = 'record.csv'):
 	with open(file_name,'a') as file:
@@ -53,16 +57,15 @@ def read_csv(file_name = 'record.csv'):
 	with open(file_name,'r') as f:
 		record_list = list(csv.reader(f))[-24:]
 		f.close()
-	return reversed(record_list)
+	return list(reversed(record_list))
 
 def loop_get():
-	data = get_data(b'C')
+	data = arduino_serial.get_data()
 	write_csv(data)
-	
+'''
 def start_timer(time_interval, funct):
-	global loop_timer
 	loop_timer = RepeatingTimer(time_interval, funct)
 	loop_timer.start()
 	return loop_timer
 	
-arduino_serial = connect_arduino()
+'''

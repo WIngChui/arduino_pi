@@ -17,7 +17,7 @@ $(document).ready(function() {
    };
    var xAxis = {
       type: 'datetime',
-      minRange: 24*{{time_interval}} // 24 *3600*1000 = 1 day
+	  minRange : 24 * {{time_interval}}
    };
    var yAxis = {
       title: {
@@ -43,6 +43,7 @@ $(document).ready(function() {
       }, {
          name: 'light_resist',
 		 pointInterval: {{time_interval}},
+		 pointStart: Date.UTC{{}},
          data: {{light_resist}}
       }
    ];
