@@ -33,17 +33,19 @@ $(document).ready(function() {
       }
    };
    var series= [{
-         name: 'temperature',
+         name: 'Temperature(*10)',
 		 pointInterval: {{time_interval}},
-         data: {{temp}}
+         pointStart: Date.UTC{{date_time}},
+		 data: {{temp}}
       }, {
-         name: 'humidity',
+         name: 'Humidity(*10)',
 		 pointInterval: {{time_interval}},
+		 pointStart: Date.UTC{{date_time}},
          data: {{humidity}}
       }, {
-         name: 'light_resist',
+         name: 'Light Resistance',
 		 pointInterval: {{time_interval}},
-		 pointStart: Date.UTC{{}},
+		 pointStart: Date.UTC{{date_time}},
          data: {{light_resist}}
       }
    ];

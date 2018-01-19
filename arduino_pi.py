@@ -12,8 +12,8 @@ app = Flask(__name__)
 @app.route("/", methods=['GET'])
 def index():
 	record_list = read_csv()
-	temp = [int(i[0]) for i in record_list]		#	[['',int(i[0])] for i in record_list]
-	humidity = [int(i[1]) for i in record_list]
+	temp = [int(i[0])*10 for i in record_list]		#	[['',int(i[0])] for i in record_list]
+	humidity = [int(i[1])*10 for i in record_list]
 	light_resist = [int(i[2]) for i in record_list]
 	date_time = (time.mktime(time.strptime(record_list[0][3],"%Y/%m/%d %H:%M:%S")))
 	return render_template('index.html', time_interval = time_interval*1000, temp = temp, humidity = humidity, light_resist = light_resist, date_time = date_time)
