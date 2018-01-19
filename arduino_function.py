@@ -20,32 +20,32 @@ class RepeatingTimer(Timer):
 			self.finished.wait(self.interval)
 			self.function(*self.args, **self.kwargs)
 		self.finished.set()
-
+'''
 class arduino_connector():
-	def __init__(self):
-		self.serial = self.connect_arduino()
+def __init__(self):
+	self.serial = self.connect_arduino()
+'''
+def	connect_arduino(self):
+	dev_port = arduino_serial.port = serial.tools.list_ports.comports()[0].device
+	arduino_serial = serial.Serial(port = dev_port, baudrate=9600, parity='N', stopbits=1, timeout=1)
+	arduino_serial.open()
+	arduino_serial.reset_output_buffer()
+	arduino_serial.reset_input_buffer()
+	return arduino_serial
 
-	def	connect_arduino(self):
-		dev_port = arduino_serial.port = serial.tools.list_ports.comports()[0].device
-		arduino_serial = serial.Serial(port = dev_port, baudrate=9600, parity='N', stopbits=1, timeout=1)
-		arduino_serial.open()
-		arduino_serial.reset_output_buffer()
-		arduino_serial.reset_input_buffer()
-		return arduino_serial
+#	Data returned in format : "temperature\r\nhumidity\r\nLight_Resistance\r\n"
+#	e.g.	"12\r\n43\r\n1023\r\n"
+#			temperature: 12C , humidity:43 , Light_Resistance: 1023
+def get_data(choice = b'C'):
+	global arduino_serial
+	self.serial.write(choice)
 
-	#	Data returned in format : "temperature\r\nhumidity\r\nLight_Resistance\r\n"
-	#	e.g.	"12\r\n43\r\n1023\r\n"
-	#			temperature: 12C , humidity:43 , Light_Resistance: 1023
-	def get_data(choice = b'C'):
-		global arduino_serial
-		self.serial.write(choice)
-
-		read_byte = self.serial.read(100)
-		#data_list = [i for i in read_byte]		#send b'B' to Arduino
-		data_list = str(read_byte,'utf8').split('\r\n')		#send b'C' to Arduino
-		data_list[3] = (datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
-		
-		return data_list
+	read_byte = self.serial.read(100)
+	#data_list = [i for i in read_byte]		#send b'B' to Arduino
+	data_list = str(read_byte,'utf8').split('\r\n')		#send b'C' to Arduino
+	data_list[3] = (datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
+	
+	return data_list
 
 def write_csv(data_list, file_name = 'record.csv'):
 	with open(file_name,'a') as file:

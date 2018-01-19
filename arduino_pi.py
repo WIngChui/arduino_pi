@@ -3,9 +3,10 @@ from flask import Flask, request, render_template, make_response
 import os
 from arduino_function import *
 
-filename = 'record_test.csv'
+filename = 'record.csv'
 time_interval = 30	#	seconds
-#loop_timer = RepeatingTimer(time_interval, loop_get)
+loop_timer = RepeatingTimer(time_interval, loop_get)
+loop_timer.start()
 
 app = Flask(__name__)
 
@@ -19,15 +20,13 @@ def index():
 	date_time[1] -= 1
 	date_time = tuple(date_time)
 	return render_template('index.html', time_interval = time_interval*1000, temp = temp, humidity = humidity, light_resist = light_resist, date_time = date_time)
-'''
+
 @app.route("/stop")
 def stop_timer():
-	global loop_timer
 	loop_timer.cancel()
-'''
+
 app.wsgi_app = ProxyFix(app.wsgi_app)
 if __name__ == '__main__':
-	#global loop_timer.start()
 	app.run(host=os.getenv('IP', '0.0.0.0'),port=int(os.getenv('PORT', 8080)),debug=True)
 	
 	
