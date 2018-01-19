@@ -7,7 +7,7 @@ filename = 'record.csv'
 time_interval = 10	#	seconds
 arduino_serial = connect_arduino()
 try: 
-	if arduino_function.is_open:
+	if arduino_serial.is_open:
 		loop_get()
 		loop_timer = RepeatingTimer(time_interval, loop_get)
 		loop_timer.start()
