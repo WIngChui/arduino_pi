@@ -4,17 +4,10 @@ import os
 from arduino_function import *
 
 filename = 'record.csv'
-time_interval = 10	#	seconds
+time_interval = 60	#	seconds
 arduino_serial = connect_arduino()
-try: 
-	if arduino_serial.is_open:
-		loop_get()
-		loop_timer = RepeatingTimer(time_interval, loop_get)
-		loop_timer.start()
-	else:
-		raise 'Timer error'
-except:
-	raise 'Arduino connection error'
+loop_timer = RepeatingTimer(time_interval, loop_get(arduino_serial))
+loop_timer.start()
 
 app = Flask(__name__)
 
