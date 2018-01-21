@@ -1,4 +1,4 @@
-from threading import Timer
+from threading import Timer, Lock
 from datetime import datetime
 import serial
 import serial.tools.list_ports
@@ -13,6 +13,8 @@ import csv
 	RepeatingTimer : Override the run function of Timer
 	
 """
+
+threadLock = Lock()
 
 class RepeatingTimer(Timer):
 	def run(self):
@@ -38,19 +40,20 @@ def connect_arduino():
 #		temperature: 12C , humidity:43 , Light_Resistance: 1023
 
 def get_data(serial_conn,choice = b'C'):
-	data_list = []
+	read_byte = []
 	serial_conn.write(choice)
-	#time.sleep(1)
-
+	time.sleep(1)
+	
 	while(True):
-		read_byte = serial_conn.read(20)
-		if read_byte != b'':
+		tmp = serial_conn.read(4)
+		if tmp != b'':
+			read_byte.append(tmp)
+		if len(read_byte) == 3:
 			break
-	#serial_conn.reset_output_buffer()
 	if choice == b'B':	#send b'B' to Arduino 
 		data_list = [i for i in read_byte]	# Alternative : list(map(ord,str(q,'utf8')))
 	if choice == b'C':
-		data_list = str(read_byte,'utf8').split('\r\n')		#send b'C' to Arduino
+		data_list = [str(i,'utf8').replace('\r\n', '') for i in read_byte]		#send b'C' to Arduino
 	data_list.append(datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
 	
 	return data_list
@@ -60,13 +63,15 @@ def write_csv(data_list, file_name = 'record.csv'):
 		csv_writer  = csv.writer(file)
 		csv_writer.writerow(data_list)
 		file.close()
-		
-def read_csv(file_name = 'record.csv'):
+
+def read_csv(num = 24*60, file_name = 'record.csv'):
 	with open(file_name,'r') as f:
-		record_list = list(csv.reader(f))[-24:]
+		record_list = list(csv.reader(f))[-num:]
 		f.close()
 	return list(reversed(record_list))
 
 def loop_get(serial_conn):
+	threadLock.acquire()
 	data = get_data(serial_conn)
 	write_csv(data)
+	threadLock.release()

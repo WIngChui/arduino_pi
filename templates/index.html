@@ -7,7 +7,7 @@
 <script src="http://code.highcharts.com/highcharts.js"></script>
 </head>
 <body>
-<div id="container" style="width: 550px; height: 400px; margin: 0 auto"></div>
+<div id="container" style="width: 75%; height: 85%; margin: 0 auto"></div>
 <script language="JavaScript">
 $(document).ready(function() {   
    var title = {
@@ -34,19 +34,28 @@ $(document).ready(function() {
    };
    var series= [{
          name: 'Temperature(*10)',
-		 pointInterval: {{time_interval}}*1000,
-         pointStart: Date.UTC{{date_time}},
-		 data: {{temp}}
+		 data: [
+				{% for i  in temperature %}
+					[Date.UTC{{ i[0] }}, {{ i[1] }}]
+					{% if not temperature.last %},{% endif %}
+				{% endfor %}
+		]
       }, {
          name: 'Humidity(*10)',
-		 pointInterval: {{time_interval}}*1000,
-		 pointStart: Date.UTC{{date_time}},
-         data: {{humidity}}
+		 data: [
+				{% for i  in humidity %}
+					[Date.UTC{{ i[0] }}, {{ i[1] }}]
+					{% if not humidity.last %},{% endif %}
+				{% endfor %}
+		]
       }, {
          name: 'Light Resistance',
-		 pointInterval: {{time_interval}}*1000,
-		 pointStart: Date.UTC{{date_time}},
-         data: {{light_resist}}
+         data: [
+				{% for i  in light_resist %}
+					[Date.UTC{{ i[0] }}, {{ i[1] }}]
+					{% if not light_resist.last %},{% endif %}
+				{% endfor %}
+		]
       }
    ];
    
