@@ -4,7 +4,7 @@ import os
 from arduino_function import *
 
 filename = 'record.csv'
-time_interval = 10	#seconds
+time_interval = 60	#seconds
 arduino_serial = connect_arduino()
 while(True):
 	if arduino_serial.is_open:
@@ -14,9 +14,9 @@ loop_timer.start()
 
 app = Flask(__name__)
 
-@app.route("/", methods=['GET'])
+@app.route("/flask/", methods=['GET'])
 def index():
-	record_list = read_csv(24)
+	record_list = read_csv()
 	temperature = []
 	humidity = []
 	light_resist = []
@@ -30,14 +30,14 @@ def index():
 
 	return render_template('index.html', time_interval = time_interval, temperature = temperature, humidity = humidity, light_resist = light_resist)
 
-@app.route("/stop")
+@app.route("/flask/stop")
 def stop_timer():
 	global loop_timer
 	loop_timer.cancel()
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
-if __name__ == '__main__':
-	app.run(host=os.getenv('IP', '0.0.0.0'),port=int(os.getenv('PORT', 8080)),debug=True)
+if __name__ == '__main__':	
+	app.run(host=os.getenv('IP', '0.0.0.0'), port=int(os.getenv('PORT', 8080)),debug=True)
 	
 	
 	

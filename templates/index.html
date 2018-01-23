@@ -9,66 +9,74 @@
 <body>
 <div id="container" style="width: 75%; height: 85%; margin: 0 auto"></div>
 <script language="JavaScript">
-$(document).ready(function() {   
-   var title = {
-      text: 'Testing'   
-   };
-   var subtitle = {
-      text: 'arduino'
-   };
-   var xAxis = {
-      type: 'datetime'
-   };
-   var yAxis = {
-      title: {
-         text: 'int'
-      }
-   };
-   var plotOptions = {
-      spline: {
-         dataLabels: {
-            enabled: true
-         },   
-         enableMouseTracking: false
-      }
-   };
-   var series= [{
-         name: 'Temperature(*10)',
+$(document).ready(function() { 
+	var chart = {
+	  zoomType: 'x'
+	};   
+	var title = {
+	  text: 'Testing'   
+	};
+	var subtitle = {
+	  text: document.ontouchstart === undefined ?
+			'Click and drag in the plot area to zoom in' :
+			'Pinch the chart to zoom in'
+	};
+	var xAxis = {
+	  type: 'datetime',
+	  minRange: 60 * 1000 , //14 * 24 * 60 * 60 * 1000 //14
+	  gridLineWidth: 1
+	};
+	var yAxis = {
+	  title: {
+		 text: 'int'
+	  }
+	};
+	var plotOptions = {
+	  spline: {
+		 dataLabels: {
+			enabled: true
+		 },   
+		 enableMouseTracking: false
+	  }
+	};
+	var series= [{
+		 name: 'Temperature(*10)',
 		 data: [
 				{% for i  in temperature %}
 					[Date.UTC{{ i[0] }}, {{ i[1] }}]
 					{% if not temperature.last %},{% endif %}
 				{% endfor %}
 		]
-      }, {
-         name: 'Humidity(*10)',
+	  }, {
+		 name: 'Humidity(*10)',
 		 data: [
 				{% for i  in humidity %}
 					[Date.UTC{{ i[0] }}, {{ i[1] }}]
 					{% if not humidity.last %},{% endif %}
 				{% endfor %}
 		]
-      }, {
-         name: 'Light Resistance',
-         data: [
+	  }, {
+		 name: 'Light Resistance',
+		 data: [
 				{% for i  in light_resist %}
 					[Date.UTC{{ i[0] }}, {{ i[1] }}]
 					{% if not light_resist.last %},{% endif %}
 				{% endfor %}
 		]
-      }
-   ];
-   
-   var json = {};
+	  }
+	];
 
-   json.title = title;
-   json.subtitle = subtitle;
-   json.xAxis = xAxis;
-   json.yAxis = yAxis;  
-   json.series = series;
-   json.plotOptions = plotOptions;
-   $('#container').highcharts(json);
-  
+	var json = {};
+
+	json.chart = chart;
+	json.title = title;
+	json.subtitle = subtitle;
+	json.xAxis = xAxis;
+	json.yAxis = yAxis;  
+	json.series = series;
+	json.plotOptions = plotOptions;
+	$('#container').highcharts(json);
+
 });
 </script>
 </body>
