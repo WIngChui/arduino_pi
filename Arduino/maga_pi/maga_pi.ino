@@ -35,6 +35,13 @@ void loop() {
           read_data();
           Serial.write(temperature);
           Serial.write(humidity);
+          Serial.write(byte(photocellVal));
+          on_lcd((int)temperature, (int)humidity, photocellVal);
+          break;
+      case 'I':
+          read_data();
+          Serial.write((int)temperature);
+          Serial.write((int)humidity);
           Serial.write(photocellVal);
           on_lcd((int)temperature, (int)humidity, photocellVal);
           break;

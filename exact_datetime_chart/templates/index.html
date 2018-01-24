@@ -10,10 +10,6 @@
 <div id="container" style="width: 75%; height: 85%; margin: 0 auto"></div>
 <script language="JavaScript">
 $(document).ready(function() { 
-	var chart = {
-	  zoomType: 'x,y',
-	  pinchType: 'x,y'
-	};   
 	var title = {
 	  text: 'Testing'   
 	};
@@ -21,12 +17,11 @@ $(document).ready(function() {
 	  //text: document.ontouchstart === undefined ?
 		//	'Click and drag in the plot area to zoom in' :
 		//	'Pinch the chart to zoom in'
-	  text: 'Click and drag in the plot area to zoom in' :
 	};
 	var xAxis = {
-	  type: 'datetime',
-	  minRange: 30 * 60 * 1000 , //14 * 24 * 60 * 60 * 1000 //14
-	  gridLineWidth: 1
+	  type: 'datetime'
+	  //minRange: 60 * 1000 , //14 * 24 * 60 * 60 * 1000 //14
+	  //gridLineWidth: 1
 	};
 	var yAxis = {
 	  title: {
@@ -42,26 +37,34 @@ $(document).ready(function() {
 	  }
 	};
 	var series= [{
-	name: 'Temperature(*10)',
- 		 pointInterval: {{time_interval}} * 1000,
-          pointStart: Date.UTC{{date_time}},
- 		 data: {{temp}}
-       }, {
-          name: 'Humidity(*10)',
- 		 pointInterval: {{time_interval}} * 1000,
- 		 pointStart: Date.UTC{{date_time}},
-          data: {{humidity}}
-       }, {
-          name: 'Light Resistance',
- 		 pointInterval: {{time_interval}} * 1000,
- 		 pointStart: Date.UTC{{date_time}},
-          data: {{light_resist}}
-       }
+		 name: 'Temperature(*10)',
+		 data: [
+				{% for i  in temperature %}
+					[Date.UTC{{ i[0] }}, {{ i[1] }}]
+					{% if not temperature.last %},{% endif %}
+				{% endfor %}
+		]
+	  }, {
+		 name: 'Humidity(*10)',
+		 data: [
+				{% for i  in humidity %}
+					[Date.UTC{{ i[0] }}, {{ i[1] }}]
+					{% if not humidity.last %},{% endif %}
+				{% endfor %}
+		]
+	  }, {
+		 name: 'Light Resistance',
+		 data: [
+				{% for i  in light_resist %}
+					[Date.UTC{{ i[0] }}, {{ i[1] }}]
+					{% if not light_resist.last %},{% endif %}
+				{% endfor %}
+		]
+	  }
 	];
 
 	var json = {};
 
-	json.chart = chart;
 	json.title = title;
 	json.subtitle = subtitle;
 	json.xAxis = xAxis;
