@@ -34,35 +34,39 @@ def allowed_file(filename):
 
 filename = 'record.csv'
 time_interval = 60	# seconds
-recording_process = start_record(time_interval, filename)
+recording_process = '' #start_record(time_interval, filename)
 
 @app.route("/flask/", methods=['GET'])
 def index():
 	record_list = read_csv(filename = filename)
-	temp = [int( i[0] ) * 10 for i in record_list]
-	humidity = [int( i[1] ) * 10 for i in record_list]
-	light_resist = [int( i[2] ) for i in record_list]
+	if record_list != []:		
+		temp = [int( i[0] ) * 10 for i in record_list]
+		humidity = [int( i[1] ) * 10 for i in record_list]
+		light_resist = [int( i[2] ) for i in record_list]
 
-	date_time = list(time.strptime(record_list[0][3],"%Y/%m/%d %H:%M:%S"))[:6]
-	date_time[1] -= 1
-	date_time = tuple(date_time)
-
-	return render_template('index.html', time_interval = time_interval, temp = temp, humidity = humidity, light_resist = light_resist, date_time = date_time)
-
+		date_time = list(time.strptime(record_list[0][3],"%Y/%m/%d %H:%M:%S"))[:6]
+		date_time[1] -= 1
+		date_time = tuple(date_time)
+	
+		return render_template('index.html', time_interval = time_interval, temp = temp, humidity = humidity, light_resist = light_resist, date_time = date_time)
+	else :
+		return render_template('index.html', time_interval = time_interval, temp = [], humidity = [], light_resist = [])
+		
 #	To Start Recording Data
 @app.route("/flask/start")
 def start_timer():
 	global recording_process, time_interval, filename
 	
 	recording_process = start_record(time_interval, filename)
-	return 'Start recording data.'
+	return redirect(url_for('index'))
 	
 #	To Stop Recording Data
 @app.route("/flask/stop")
 def stop_timer():
 	global recording_process
-	recording_process.cancel()
-	return 'Stop recording data.'
+	if type(recording_process) != str:
+		recording_process.cancel()
+	return redirect(url_for('index'))#'Stop recording data.'
 	
 @app.route('/flask/uploads', methods=['GET', 'POST'])
 def upload_file():
@@ -80,8 +84,7 @@ def upload_file():
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
 			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-			return redirect(url_for('uploaded_file',
-									filename=filename))
+			return redirect(url_for('uploaded_file'))
 	return render_template('upload_file.html')
 	
 @app.route('/flask/microbit')
@@ -91,9 +94,9 @@ def uploaded_file():
 	
 @app.route('/flask/delete/<filename>')
 def delete(filename):
-    target_file =  (os.path.join(UPLOAD_FOLDER,filename))
-    os.remove(target_file)
-    return 'Removed ' + filename
+	target_file =  (os.path.join(UPLOAD_FOLDER,filename))
+	os.remove(target_file)
+	return redirect(url_for('uploaded_file'))
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 if __name__ == '__main__':	

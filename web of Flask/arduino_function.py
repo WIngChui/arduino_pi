@@ -24,7 +24,9 @@ class RepeatingTimer(Timer):
 		self.finished.set()
 		
 def connect_arduino():
-	# Get which port of server is the Arduino board connected to
+	# Get which port of server is the Arduino board connected to,
+	# when only one device is connect to the raspberry pi
+	# Otherwise, need specification 
 	dev_port = serial.tools.list_ports.comports()[0].device
 	
 	# Build up and open a serial connection to the Arduino board
@@ -117,6 +119,11 @@ def read_csv(num = 24*60, filename = 'record.csv'):
 	with open(filename,'r') as f:
 		record_list = list(csv.reader(f))[-num:]
 		f.close()
+	if ['Start'] in record_list:
+		record_list.reverse()
+		tmp = record_list.index(['Start'])
+		record_list = record_list[:tmp]
+		record_list.reverse()
 	return list(record_list)
 
 def record_data(serial_connection, filename):
@@ -132,6 +139,7 @@ def start_record(time_interval, filename):
 			break
 	loop_timer = RepeatingTimer(time_interval-1, record_data, (serial_connection, filename))
 	loop_timer.start()
+	write_csv(['Start'], filename)
 	return loop_timer
 	
 def stop_record(recording_process):

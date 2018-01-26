@@ -21,7 +21,7 @@ $(document).ready(function() {
 	  //text: document.ontouchstart === undefined ?
 		//	'Click and drag in the plot area to zoom in' :
 		//	'Pinch the chart to zoom in'
-	  text: 'Click and drag in the plot area to zoom in' :
+	  text: 'Click and drag in the plot area to zoom in' 
 	};
 	var xAxis = {
 	  type: 'datetime',
@@ -72,5 +72,17 @@ $(document).ready(function() {
 
 });
 </script>
+<div align = "center">
+	<div style='display: inline-block'>
+		<form name='start' action="{{url_for('start_timer')}}">
+			<input type="submit" value="Start">
+		</form>
+	</div>
+	<div style='display: inline-block'>
+		<form name='stop' action="{{url_for('stop_timer')}}">
+			<input type="submit" value="Stop">
+		</form>
+	</div>
+</div>
 </body>
 </html>

@@ -1,48 +1,34 @@
-#include <SimpleDHT.h>
-#include <LiquidCrystal_I2C.h>
-#include <Wire.h>
+#include <LiquidCrystal_I2C.h> // LCD monitor
+#include <Wire.h> 
+#include <dht.h>
 
-int pinDHT11 = 2;
-int photocellPin = A0;
-int photocellVal = 0;
-byte temperature = 0;
-byte humidity = 0;
-int err = SimpleDHTErrSuccess;
+//Constants
+#define DHTPIN 2     // what pin we're connected to
+// Initialize DHT sensor for normal 16mhz Arduino
+dht dht11;  
 
-LiquidCrystal_I2C lcd(0x27,20,4);
-SimpleDHT11 dht11;
+LiquidCrystal_I2C lcd(0x27, 16,2); // Initialize DHT sensor
+int photocellPin = 0; // Analog pin 
+int photocellVal = 0; // initialize Light Resistance value
+
+float temperature = 0;
+float humidity = 0;
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(9600);
   lcd.init(); 
   lcd.begin(16, 2);
 }
 
 void loop() {
-  
   if (Serial.available() > 0) {
     char choice = Serial.read();
     switch(choice){
-      case 'A':
-          read_data();
-          Serial.write("T:");send_TH(temperature);
-          Serial.write("H:");send_TH(humidity);
-          Serial.write("R:");Serial.print(photocellVal);
-          on_lcd((int)temperature, (int)humidity, photocellVal);
-          break;
       case 'B':
           read_data();
-          Serial.write(temperature);
-          Serial.write(humidity);
+          Serial.write(byte(temperature));
+          Serial.write(byte(humidity));
           Serial.write(byte(photocellVal));
-          on_lcd((int)temperature, (int)humidity, photocellVal);
-          break;
-      case 'I':
-          read_data();
-          Serial.write((int)temperature);
-          Serial.write((int)humidity);
-          Serial.write(photocellVal);
           on_lcd((int)temperature, (int)humidity, photocellVal);
           break;
       case 'C':
@@ -71,26 +57,23 @@ void loop() {
   }
 }
 
-void send_TH(byte val){
-    byte tmp[] = {val};
-    for (int i ;i<sizeof(tmp);i++){
-        Serial.print(tmp[i]);
-    }
-}
-
 void read_data(){
   photocellVal = analogRead(photocellPin);
-  if ((err = dht11.read(pinDHT11, &temperature, &humidity, NULL)) != SimpleDHTErrSuccess) {
-    Serial.println("fail");
-  }
+  int check = dht11.read11(DHTPIN);
+    if (check == 0) {
+        //Read data and store it to variables hum and temp
+        humidity = dht11.humidity;
+        temperature= dht11.temperature;
+    }
+    else {
+        Serial.println("fail");
+    }
 }
 
 void on_lcd(int temperature, int humidity, int photocellVal){
   lcd.clear();
-  //lcd.print("Temp : ");
   lcd.print((int)temperature);
   lcd.print(" *C  ");
-  //lcd.print("Humidity : ");
   lcd.print((int)humidity);
   lcd.print("H");
   lcd.setCursor(0,1);
